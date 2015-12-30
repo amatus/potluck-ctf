@@ -33,6 +33,11 @@
                  id])
               scoreboard))))
 
+(defc token nil)
+(defc= logged-in? rpc/token-ok)
+(defc= error rpc/error)
+(defc= error-message (when error (.-message error)))
+
 (rpc/init)
 
 (html
@@ -41,13 +46,47 @@
     (title "Potluck CTF"))
   (body
     (h1 "Potluck CTF")
-    (text "Login/Register?")
+    (div
+      :id "error"
+      :click #(reset! rpc/error nil)
+      :toggle (cell= (not (nil? rpc/error)))
+      (text "Error: ~{error-message}"))
+    (let [token-input (input :name "token")]
+      (form
+        :toggle (cell= (not logged-in?))
+        :submit #(do (reset! token (.-value token-input))
+                   (rpc/check-token @token)
+                   (set! (.-value token-input) nil))
+        (text "Registration Token:")
+        token-input
+        (input :type "submit")))
+    (let [name-input (input :name "name")]
+      (form
+        :toggle logged-in?
+        :submit #(do (rpc/set-name! @token (.-value name-input))
+                   (set! (.-value name-input) nil))
+        (text "Change Name:")
+        name-input
+        (input :type "submit")))
+    (let [flag-input (input :name "flag")]
+      (form
+        :toggle logged-in?
+        :submit #(do (rpc/submit-flag! @token (.-value flag-input))
+                   (set! (.-value flag-input) nil))
+        (text "Flag:")
+        flag-input
+        (input :type "submit")))
+    (form
+      :toggle logged-in?
+      :submit #(do (reset! token nil)
+                 (reset! rpc/token-ok false))
+      (input :type "submit" :value "Logout"))
     (h2 "Scoreboard")
     (table
       (thead
         (tr
-          (th)
-          (th)
+          (th :colspan 2
+              :style "border:none")
           (loop-tpl :bindings [probs (cell= (partition-by first problems))]
                     (th :text (cell= (:name (get scoreboard
                                                  (first (first probs)))))

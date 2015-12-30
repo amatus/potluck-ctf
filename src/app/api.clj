@@ -4,3 +4,23 @@
 
 (defrpc get-scoreboard []
         (db/get :scoreboard))
+
+(defrpc check-token [token]
+        {:rpc/pre (contains? (db/get :tokens) token)}
+        true)
+
+(defrpc set-name! [token name]
+        {:rpc/pre (contains? (db/get :tokens) token)}
+        (db/update! :scoreboard
+                    assoc-in
+                    [(first (.split token "-")) :name]
+                    (apply str (take 32 name))))
+
+(defrpc submit-flag! [token flag]
+        {:rpc/pre (and (contains? (db/get :tokens) token)
+                       (contains? (db/get :flags) flag))}
+        (let [problem (db/get-in :flags [flag])]
+          (db/update! :scoreboard
+                      assoc-in
+                      [(first (.split token "-")) :scores problem]
+                      :solved)))
