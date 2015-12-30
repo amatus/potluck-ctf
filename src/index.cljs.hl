@@ -1,0 +1,73 @@
+(page "index.html"
+  (:require [app.rpc :as rpc]))
+
+(defc= scoreboard (merge (sorted-map) rpc/scoreboard))
+(defc= problems (mapcat (fn [[id person]]
+                          (map (partial vector id) (:problems person)))
+                        scoreboard))
+(defc= scores
+       (reverse (sort
+         (map (fn [[id person]]
+                [(apply
+                   +
+                   (concat
+                     (map (fn [[prob state]]
+                            (if (and
+                                  (= :solved state)
+                                  (not (contains? (:problems person) prob)))
+                              1
+                              0))
+                          (:scores person))
+                     (map (fn [prob]
+                            (if (some (fn [[id2 person2]]
+                                        (and
+                                          (= :solved
+                                             (get (:scores person) prob))
+                                          (= :solved
+                                             (get (:scores person2) prob))
+                                          (not= id id2)))
+                                      scoreboard)
+                              1
+                              0))
+                          (:problems person))))
+                 id])
+              scoreboard))))
+
+(rpc/init)
+
+(html
+  (head
+    (link :rel "stylesheet" :type "text/css" :href "css/main.css")
+    (title "Potluck CTF"))
+  (body
+    (h1 "Potluck CTF")
+    (text "Login/Register?")
+    (h2 "Scoreboard")
+    (table
+      (thead
+        (tr
+          (th)
+          (th)
+          (loop-tpl :bindings [probs (cell= (partition-by first problems))]
+                    (th :text (cell= (:name (get scoreboard
+                                                 (first (first probs)))))
+                        :colspan (cell= (count probs)))))
+        (tr
+          (th "Player")
+          (th "Score")
+          (loop-tpl :bindings [[owner name] problems]
+                    (th :text name))))
+      (tbody
+        (loop-tpl :bindings [[score id] scores]
+                  (let [player (cell= (get scoreboard id))]
+                    (tr
+                      (td :text (cell= (:name player)))
+                      (td :text score)
+                      (loop-tpl :bindings [[owner _name] problems]
+                                (td :text (cell=
+                                            (name (get (:scores player)
+                                                       _name
+                                                       :unsolved))))))))
+        ))))
+
+;; vim: set expandtab ts=2 sw=2 filetype=clojure :

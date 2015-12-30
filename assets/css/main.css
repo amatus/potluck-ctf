@@ -1,0 +1,35 @@
+@font-face {
+    font-family: "Proxima-light";
+    src: url("/fonts/proximanova/proximanova-light/proximanova-light.eot");
+    src: url("/fonts/proximanova/proximanova-light/proximanova-light.eot?#iefix") format("embedded-opentype"),url("/fonts/proximanova/proximanova-light/proximanova-light.woff?2") format("woff"),url("/fonts/proximanova/proximanova-light/proximanova-light.ttf?2") format("truetype"),url("/fonts/proximanova/proximanova-light/proximanova-light.svg#svgFontName") format("svg")
+}
+
+@font-face {
+    font-family: "Proxima-regular";
+    src: url("/fonts/proximanova/proximanova-regular/proximanova-regular.eot");
+    src: url("/fonts/proximanova/proximanova-regular/proximanova-regular.eot?#iefix") format("embedded-opentype"),url("/fonts/proximanova/proximanova-regular/proximanova-regular.woff?2") format("woff"),url("/fonts/proximanova/proximanova-regular/proximanova-regular.ttf?2") format("truetype"),url("/fonts/proximanova/proximanova-regular/proximanova-regular.svg#svgFontName") format("svg")
+}
+
+@font-face {
+    font-family: "Proxima-semibold";
+    src: url("/fonts/proximanova/proximanova-semibold/proximanova-semibold.eot");
+    src: url("/fonts/proximanova/proximanova-semibold/proximanova-semibold.eot?#iefix") format("embedded-opentype"),url("/fonts/proximanova/proximanova-semibold/proximanova-semibold.woff?2") format("woff"),url("/fonts/proximanova/proximanova-semibold/proximanova-semibold.ttf?2") format("truetype"),url("/fonts/proximanova/proximanova-semibold/proximanova-semibold.svg#svgFontName") format("svg")
+}
+
+@font-face {
+    font-family: "Proxima-bold";
+    src: url("/fonts/proximanova/proximanova-bold/proximanova-bold.eot");
+    src: url("/fonts/proximanova/proximanova-bold/proximanova-bold.eot?#iefix") format("embedded-opentype"),url("/fonts/proximanova/proximanova-bold/proximanova-bold.woff?2") format("woff"),url("/fonts/proximanova/proximanova-bold/proximanova-bold.ttf?2") format("truetype"),url("/fonts/proximanova/proximanova-bold/proximanova-bold.svg#svgFontName") format("svg")
+}
+body {
+    color: #383f45;
+    background-color: #f5f5f5;
+    font-family: "Proxima-regular"
+}
+h1,h2,h3 {
+    font-family: "Proxima-semibold"
+}
+
+table th {
+    font-family: "Proxima-bold"
+}
