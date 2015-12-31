@@ -29,3 +29,8 @@
         {:rpc/pre (= token (db/get :admin))}
         (binding [*ns* (find-ns 'simpledb.core)]
           (eval (read-string expr))))
+
+(defrpc get-hints []
+        (if (db/get :drop-hints)
+          (db/get :hints)
+          "Hack Harder!"))

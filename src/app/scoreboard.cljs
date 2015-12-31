@@ -56,9 +56,12 @@
                       (td :text (cell= (:name player)))
                       (td :text score)
                       (loop-tpl :bindings [[owner _name] problems]
-                                (td :text (cell=
-                                            (name (get (:scores player)
-                                                       _name
-                                                       :unsolved))))))))))))
+                                (let [solved (cell= (= :solved
+                                                 (get (:scores player)
+                                                      _name
+                                                      :unsolved)))]
+                                  (td
+                                    :text (cell=
+                                            (when solved "\u2713"))))))))))))
 
 ;; vim: set expandtab ts=2 sw=2 filetype=clojure :

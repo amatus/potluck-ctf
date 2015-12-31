@@ -3,6 +3,7 @@
             [app.scoreboard :as s]))
 
 (defc token nil)
+(defc hints-expanded false)
 (defc= logged-in? rpc/token-ok)
 (defc= error rpc/error)
 (defc= error-message (when error (.-message error)))
@@ -50,6 +51,12 @@
       :submit #(do (reset! token nil)
                  (reset! rpc/token-ok false))
       (input :type "submit" :value "Logout"))
+    (h2 :toggle logged-in?
+        :click #(do (swap! hints-expanded not)
+                  (rpc/get-hints))
+        (text "~(if hints-expanded \"\u25be\" \"\u25b8\") Hints"))
+    (pre :toggle hints-expanded
+         :text rpc/hints)
     (h2 "Scoreboard")
     (s/scoreboard :scoreboard rpc/scoreboard)))
 
