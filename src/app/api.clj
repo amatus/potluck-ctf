@@ -24,3 +24,8 @@
                       assoc-in
                       [(first (.split token "-")) :scores problem]
                       :solved)))
+
+(defrpc admin-eval! [token expr]
+        {:rpc/pre (= token (db/get :admin))}
+        (binding [*ns* (find-ns 'simpledb.core)]
+          (eval (read-string expr))))

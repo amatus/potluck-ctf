@@ -10,6 +10,7 @@
 (defc error nil)
 (defc loading [])
 (defc token-ok false)
+(defc eval-result nil)
 
 (def get-scoreboard
   (mkremote 'app.api/get-scoreboard scoreboard scoreboard-error loading))
@@ -22,6 +23,9 @@
 
 (def submit-flag!
   (mkremote 'app.api/submit-flag! scoreboard error loading))
+
+(def admin-eval!
+  (mkremote 'app.api/admin-eval! eval-result error loading))
 
 (defn init []
   (get-scoreboard)

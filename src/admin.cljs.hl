@@ -1,9 +1,10 @@
-(page "index.html"
+(page "admin.html"
   (:require [app.rpc :as rpc]
-            [app.scoreboard :as s]))
+            [app.scoreboard :as s]
+            [cljs.pprint :refer [pprint]]))
 
 (defc token nil)
-(defc= logged-in? rpc/token-ok)
+(defc= logged-in? (not (nil? token)))
 (defc= error rpc/error)
 (defc= error-message (when error (.-message error)))
 
@@ -12,9 +13,9 @@
 (html
   (head
     (link :rel "stylesheet" :type "text/css" :href "css/main.css")
-    (title "Potluck CTF"))
+    (title "Potluck CTF Adminstration"))
   (body
-    (h1 "Potluck CTF")
+    (h1 "Potluck CTF Administration")
     (div
       :id "error"
       :click #(reset! rpc/error nil)
@@ -24,27 +25,22 @@
       (form
         :toggle (cell= (not logged-in?))
         :submit #(do (reset! token (.-value token-input))
-                   (rpc/check-token @token)
                    (set! (.-value token-input) nil))
-        (text "Registration Token:")
+        (text "Admin Token:")
         token-input
         (input :type "submit")))
-    (let [name-input (input :name "name")]
+    (let [eval-input (input :name "eval" :size 100)
+          output (textarea
+                   :value (cell= (with-out-str
+                                   (pprint rpc/eval-result))))]
       (form
         :toggle logged-in?
-        :submit #(do (rpc/set-name! @token (.-value name-input))
-                   (set! (.-value name-input) nil))
-        (text "Change Name:")
-        name-input
-        (input :type "submit")))
-    (let [flag-input (input :name "flag")]
-      (form
-        :toggle logged-in?
-        :submit #(do (rpc/submit-flag! @token (.-value flag-input))
-                   (set! (.-value flag-input) nil))
-        (text "Flag:")
-        flag-input
-        (input :type "submit")))
+        :submit #(rpc/admin-eval! @token (.-value eval-input))
+        (text "(eval ")
+        eval-input
+        (text ")")
+        (br)
+        output))
     (form
       :toggle logged-in?
       :submit #(do (reset! token nil)
