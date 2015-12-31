@@ -2,8 +2,7 @@
   (:require [app.rpc :as rpc]
             [app.scoreboard :as s]))
 
-(defc token nil)
-(defc hints-expanded false)
+(defc token "")
 (defc= logged-in? rpc/token-ok)
 (defc= error rpc/error)
 (defc= error-message (when error (.-message error)))
@@ -30,14 +29,20 @@
         (text "Registration Token:")
         token-input
         (input :type "submit")))
-    (let [name-input (input :name "name")]
-      (form
-        :toggle logged-in?
-        :submit #(do (rpc/set-name! @token (.-value name-input))
-                   (set! (.-value name-input) nil))
-        (text "Change Name:")
-        name-input
-        (input :type "submit")))
+    (let [my-name (cell=
+                    (:name (get rpc/scoreboard (first (.split token "-")))))
+          toggle (cell false)
+          editing-name? (cell= (or toggle (nil? my-name)))
+          name-input (input :name "name" :toggle editing-name? :value my-name)]
+      (form :toggle logged-in?
+            :submit #(do (rpc/set-name! @token (.-value name-input))
+                       (reset! toggle false))
+           (span :click #(reset! toggle true)
+                 :title "Click to change"
+                (text "Your name is: ")
+                (span :toggle (cell= (not editing-name?)) :text my-name))
+            name-input
+            (input :toggle editing-name? :type "submit")))
     (let [flag-input (input :name "flag")]
       (form
         :toggle logged-in?
@@ -48,15 +53,17 @@
         (input :type "submit")))
     (form
       :toggle logged-in?
-      :submit #(do (reset! token nil)
+      :submit #(do (reset! token "")
                  (reset! rpc/token-ok false))
       (input :type "submit" :value "Logout"))
-    (h2 :toggle logged-in?
-        :click #(do (swap! hints-expanded not)
-                  (rpc/get-hints))
-        (text "~(if hints-expanded \"\u25be\" \"\u25b8\") Hints"))
-    (pre :toggle hints-expanded
-         :text rpc/hints)
+    (let [toggle (cell false)]
+      (div
+        (h2 :toggle logged-in?
+            :click #(do (swap! toggle not)
+                      (rpc/get-hints))
+            (text "~(if toggle \"\u25be\" \"\u25b8\") Hints"))
+        (pre :toggle toggle
+             :text rpc/hints)))
     (h2 "Scoreboard")
     (s/scoreboard :scoreboard rpc/scoreboard)))
 
