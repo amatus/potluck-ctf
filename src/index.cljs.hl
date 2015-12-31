@@ -20,7 +20,7 @@
       :id "error"
       :click #(reset! rpc/error nil)
       :toggle (cell= (not (nil? rpc/error)))
-      (text "Error: ~{error-message}"))
+      (text "\u00d7 Error: ~{error-message}"))
     (let [token-input (input :name "token")]
       (form
         :toggle (cell= (not logged-in?))
