@@ -7,8 +7,9 @@
             [simpledb.core :as db]))
 
 (c/defroutes app-routes
-  (c/GET "/" req (response/content-type (response/resource-response "index.html") "text/html"))
-  (route/resources "/" {:root ""}))
+  (c/GET "/potluck" req (response/redirect "/potluck/"))
+  (c/GET "/potluck/" req (response/content-type (response/resource-response "index.html") "text/html"))
+  (route/resources "/potluck/" {:root ""}))
 
 (def app
   (-> app-routes
