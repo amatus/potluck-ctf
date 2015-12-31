@@ -41,6 +41,10 @@
   "Build castra-simple for production deployment."
   []
   (comp
+    (serve
+      :handler 'app.handler/app
+      :port 8000)
     (hoplon)
     (cljs :optimizations :advanced)
-    (prerender)))
+    (prerender)
+    (wait)))
